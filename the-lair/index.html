@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>The Lair</title>
+        <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
+
+<style type="text/css">
+
+html,body {
+	margin: 0;
+	font: 16px Helvetica, Arial, sans-serif;
+	background: #222;
+}
+canvas#canvas {
+  width: 512px; height: 512px;
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+.game {
+  width: 512px;
+  padding: 14px;
+  background: #000;
+}
+.btns {
+	display: flex;
+	margin-top: 1px;
+}
+.btns .spacer {
+	flex-grow: 1;
+	background: black;
+}
+.btns a {
+	display: block;
+	box-sizing: border-box;
+	background: #000;
+	color: #9ac;
+	flex-grow: 0;
+	text-align: center;
+	margin: 0 1px;
+	vertical-align: middle;
+	width: 30px;
+	height: 30px;
+	padding-top: 9px;
+	font-weight: bold;
+	text-decoration: none;
+	transition: all 0.2s ease-out;
+}
+.btns a:hover {
+	background:#224;
+}
+</style>
+</head>
+
+<body onload="window.focus()">
+	<div style="width:540px; margin:auto;">
+    <div class="game">
+		  <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+		<div class="btns pico8_el">
+			<div class="spacer"></div>
+			<a href="javascript:Module.pico8Reset();" title="Restart"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAaklEQVR4Ae2dOwoAMQhE15A+rfc/3bZ7AlMnQfywCkKsfcgMM9ZP+QHtIn0vLeBAFduiFdQ/0DmvtR5LXJ6CPSXe2ZXcFNlTxFbemKrbZPs35XogeS9xeQr+anT6LzoOwEDwZJ7jwhXUnwkTTiDQ2Ja34AAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"/></a>
+			<a href="javascript:Module.pico8ToggleSound();" title="Sound"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAXklEQVR4Ae2doQ4AIQxD4YLH8v9fh+ULhjpxxSwLg2uyapr1JRu1iV5Z+1BGl4+xNpX38SYo2uRvYiT5LwEmt+ocgXVLrhPEgBiw8Q5w7/kueSkK+D2tJO4E/I3GrwkqQCBabEj/4QAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"/></a>
+			<a href="javascript:Module.pico8TogglePaused();" title="Pause"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAPUlEQVR4Ae3doQ0AIAxEUWABLPtPh2WCq26DwFSU/JPNT166QSu/Hg86W9dwLte+diP7AwAAAAAAgD+A+jM2ZAgo84I0PgAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"></a>
+			<a href="javascript:Module.requestFullScreen(true, false);" title="Fullscreen"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAaklEQVR4Ae2dsQ1AIQhExfze1v2ns3UCrfgFhmgUUAoGgHscp21wX9BqaZoDojbB96OkDJKNcTN2BHTyYNYmoT2BlPL7BKgcPfHjAVXKKadkHOn9K1r16N0czN6a95N8mnA7Aq2fTZ3Af3UKmCSMazL8HwAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"></a>
+		</div>
+		<script type="text/javascript">
+			var canvas = document.getElementById("canvas");
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			// show Emscripten environment where the canvas is
+			// arguments are passed to PICO-8
+
+			var Module = {
+				arguments: ["-width","512","-height","512","-music","80"],
+			};
+			Module.canvas = canvas;
+		</script>
+		<script src="pico8gamepad.js"></script>
+		<script async type="text/javascript" src="lairrelease60a.js"></script>
+		<script>
+			function onKeyDown_blocker(event) {
+				event = event || window.event;
+				var o = document.activeElement;
+				if (!o || o == document.body || o.tagName == "canvas")
+				{
+					if ([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1)
+					{
+						if (event.preventDefault) event.preventDefault();
+					}
+				}
+			}
+			document.addEventListener('keydown', onKeyDown_blocker, false);
+		</script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pieces of Cake</title>
+
+<style type="text/css">
+
+html,body {
+	margin: 0;
+	font: 16px Helvetica, Arial, sans-serif;
+	background: black;
+}
+div.holder {
+  background: black;
+  padding: 0; margin: 0 auto;
+  position: relative;
+  width: 512px;
+}
+img.splashscreen {
+  display: none;
+  position: absolute;
+  width: 512px;
+  height: 512px;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+canvas#canvas {
+  width: 512px; height: 512px;
+  display: block;
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+  border: 0px;
+  cursor: none;
+}
+.btns {
+  width: 512px;
+  padding: 0;
+	display: flex;
+	margin-top: 1px;
+}
+.btns .spacer {
+	flex-grow: 1;
+	background: black;
+}
+.btns a {
+	display: block;
+	box-sizing: border-box;
+	background: #000;
+	color: #9ac;
+	flex-grow: 0;
+	text-align: center;
+	margin: 0 1px;
+	vertical-align: middle;
+	width: 30px;
+	height: 30px;
+	padding-top: 9px;
+	font-weight: bold;
+	text-decoration: none;
+	transition: all 0.2s ease-out;
+}
+.btns a:hover {
+	background:#224;
+}
+
+div#holder.fullscreen {
+  width: 100% !important;
+}
+canvas#canvas.fullscreen {
+  position: absolute;
+}
+.mcontrols, .mextra {
+  display: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  z-index: 10;
+}
+.visible { display: block; }
+.debug {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+    background: black;
+    color: white;
+    display: none;
+}
+
+</style>
+</head>
+
+<body onload="window.focus()">
+	<div id="holder" class="holder">
+		<canvas class="emscripten" id="canvas" width="512" height="512"></canvas>
+    <!--<img class="splashscreen" width="512" height="512" src="coolmath-splashscreen.png">-->
+    <div class="btns pico8_el">
+  		<div class="spacer"></div>
+      <a class="btn" href="javascript:Module.pico8ToggleSound();" title="Sound"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAXklEQVR4Ae2doQ4AIQxD4YLH8v9fh+ULhjpxxSwLg2uyapr1JRu1iV5Z+1BGl4+xNpX38SYo2uRvYiT5LwEmt+ocgXVLrhPEgBiw8Q5w7/kueSkK+D2tJO4E/I3GrwkqQCBabEj/4QAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"/></a>
+  		<a class="btn" href="javascript:Module.pico8Reset();" title="Restart"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAaklEQVR4Ae2dOwoAMQhE15A+rfc/3bZ7AlMnQfywCkKsfcgMM9ZP+QHtIn0vLeBAFduiFdQ/0DmvtR5LXJ6CPSXe2ZXcFNlTxFbemKrbZPs35XogeS9xeQr+anT6LzoOwEDwZJ7jwhXUnwkTTiDQ2Ja34AAAABB0RVh0TG9kZVBORwAyMDExMDIyMeNZtsEAAAAASUVORK5CYII=" width="12" height="12"/></a>
+  	</div>
+  </div>
+  <div class="debug">Hi!</div>
+	<script type="text/javascript">
+		var canvas = document.getElementById("canvas");
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		// show Emscripten environment where the canvas is
+		// arguments are passed to PICO-8
+		var Module = {
+			arguments: ["-width","128", "-height","128"],
+      canvas: canvas
+		};
+    var pico8_gpio = new Array(128);
+
+    var forceMobile = window.location.href.match(/\?mobile/);
+    var looksMobile = navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|Windows Phone|Blackberry|Mobile/i);
+    var hasTouch = (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+    if ((looksMobile && hasTouch) || forceMobile) {
+      pico8_gpio[0] = 128;
+    }
+	</script>
+  <script src="jquery-3.3.1.min.js"></script>
+	<script src="pico8gamepad.js"></script>
+  <script src="support.js"></script>
+  <script src="pieces-of-cake.js"></script>
+  <script>
+    registerAudioUnlock();
+    // pick the right interface
+    if ((looksMobile && hasTouch) || forceMobile) {
+      startMobile(false);
+      $(".debug").html("Started in mobile mode.")
+    } else {
+      $(".debug").html("Started in PC mode.")
+    }
+    showSplashscreen();
+  </script>
+	<script>
+		function onKeyDown_blocker(event) {
+      unlockAudio();
+			event = event || window.event;
+			var o = document.activeElement;
+			if (!o || o == document.body || o.tagName == "canvas" || o.className.indexOf('btn') >= 0)
+			{
+				if ([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1)
+				{
+					if (event.preventDefault) event.preventDefault();
+				}
+			}
+		}
+		document.addEventListener('keydown', onKeyDown_blocker, false);
+	</script>
+</body>
+</html>
